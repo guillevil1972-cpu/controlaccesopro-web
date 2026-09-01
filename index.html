@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Acceso Pro — Plataforma de Gestión de Accesos para Barrios y Countries</title>
+<meta name="description" content="Plataforma integral de control de accesos para barrios privados, countries y clubes. Registro de movimientos con validación de integridad, reportes PDF y operación sin conectividad.">
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1D; --panel:#121B30; --input:#0C1424;
+  --border:#26334F; --hair:rgba(148,163,184,.14);
+  --acc:#C08245; --acc-2:#D9A05B; --blue:#4A6FA5;
+  --bad:#B03A4B; --ok:#4CAF50;
+  --txt:#E6EDF3; --mut:#94A3B8; --faint:#5B6B82;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --fs-d1:clamp(2.6rem,5.4vw,4.4rem);
+  --fs-d2:clamp(1.9rem,3.4vw,2.7rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Bricolage Grotesque',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--acc);color:#0A0F1D}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--acc)}
+.mono{font-family:'Space Mono',monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ---------- reveal system ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .56s var(--ease),transform .56s var(--ease);transition-delay:calc(var(--i,0)*70ms)}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ---------- nav ---------- */
+header{position:fixed;inset:0 0 auto;z-index:50;background:rgba(10,15,29,.78);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--hair)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:-.01em}
+.brand img{width:38px;height:38px;border-radius:9px;box-shadow:0 0 14px rgba(192,130,69,.35)}
+.brand small{display:block;font-weight:400;font-size:.68rem;color:var(--mut);letter-spacing:.14em;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:34px;font-size:.92rem;color:var(--mut)}
+.nav-links a{transition:color .25s}
+.nav-links a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;border-radius:10px;transition:transform .25s var(--ease),box-shadow .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn-acc{background:var(--acc);color:#14100A;animation:breathe 3.4s ease-in-out infinite}
+.btn-acc:hover{box-shadow:0 0 28px rgba(192,130,69,.45)}
+.btn-ghost{border:1px solid var(--border);color:var(--txt);background:transparent}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc-2)}
+@keyframes breathe{0%,to{box-shadow:0 0 0 0 rgba(192,130,69,0)}50%{box-shadow:0 0 0 7px rgba(192,130,69,.16)}}
+.nav .btn{padding:9px 18px;font-size:.88rem}
+.burger{display:none;background:none;border:0;color:var(--txt);cursor:pointer;padding:6px}
+#mobileMenu{display:none;flex-direction:column;gap:18px;padding:20px clamp(20px,4vw,48px) 26px;border-bottom:1px solid var(--hair);background:rgba(10,15,29,.97)}
+#mobileMenu.open{display:flex}
+#mobileMenu a{color:var(--mut);font-size:1.02rem}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:150px 0 90px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:64px 64px;animation:gridpan 38s linear infinite;mask-image:radial-gradient(ellipse 90% 80% at 50% 20%,#000 30%,transparent 75%);pointer-events:none}
+@keyframes gridpan{to{background-position:64px 64px}}
+.hero::after{content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse,rgba(74,111,165,.16),transparent 65%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,5vw,80px);align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2);border:1px solid rgba(192,130,69,.35);padding:7px 14px;border-radius:99px;margin-bottom:26px}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:blink 2.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+h1{font-size:var(--fs-d1);line-height:1.04;letter-spacing:-.02em;font-weight:700}
+h1 .grad{background:linear-gradient(100deg,var(--acc-2),var(--acc) 60%,#8A5A28);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{margin:24px 0 34px;font-size:1.13rem;line-height:1.65;color:var(--mut);max-width:34rem}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.hero-ctas .btn{padding:15px 26px;font-size:1rem}
+.hero-note{margin-top:18px;font-size:.8rem;color:var(--faint)}
+.hero-note b{color:var(--acc-2);font-weight:600}
+
+/* phone mockup */
+.device-zone{position:relative;display:flex;justify-content:center}
+.phone{width:min(300px,78vw);border-radius:38px;border:1px solid var(--border);background:#05080F;padding:12px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 60px rgba(74,111,165,.12);animation:floaty 7s ease-in-out infinite;position:relative;z-index:2}
+@keyframes floaty{0%,to{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.phone .notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:110px;height:22px;background:#05080F;border-radius:12px;z-index:3}
+.shotbox{border-radius:27px;overflow:hidden;aspect-ratio:400/866;position:relative;background:var(--input)}
+.shotbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .8s var(--ease)}
+.shotbox img.act{opacity:1}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
+.dots button{width:8px;height:8px;border-radius:50%;border:0;background:var(--border);cursor:pointer;transition:all .3s;padding:0}
+.dots button.act{background:var(--acc);width:22px;border-radius:5px}
+.orbit-tag{position:absolute;z-index:4;background:rgba(18,27,48,.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-size:.78rem;color:var(--mut);animation:floaty 9s ease-in-out infinite}
+.orbit-tag b{display:block;color:var(--txt);font-size:.9rem}
+.orbit-tag .mono{color:var(--acc-2);font-size:.72rem}
+.ot1{top:8%;left:-4%;animation-delay:.6s}
+.ot2{bottom:14%;right:-6%;animation-delay:1.4s}
+
+/* ---------- section scaffolding ---------- */
+section{padding:96px 0;position:relative}
+.sec-head{margin-bottom:56px;max-width:46rem}
+.marker{display:flex;align-items:center;gap:14px;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc-2);margin-bottom:18px}
+.marker::after{content:"";flex:0 0 60px;height:1px;background:linear-gradient(90deg,var(--acc),transparent)}
+h2{font-size:var(--fs-d2);line-height:1.12;letter-spacing:-.018em;font-weight:700;max-width:22ch}
+.sec-head p{margin-top:16px;color:var(--mut);line-height:1.65;font-size:1.04rem}
+.hair{height:1px;background:var(--hair)}
+
+/* problem */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.vs .col{border:1px solid var(--border);border-radius:16px;padding:34px;background:var(--panel);position:relative;overflow:hidden}
+.vs .col.old{border-color:rgba(176,58,75,.35)}
+.vs .col.new{border-color:rgba(192,130,69,.4);background:linear-gradient(160deg,#16203A,#121B30)}
+.vs h3{font-size:1.25rem;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.tag{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.tag.old{background:rgba(176,58,75,.15);color:#E0808C;border:1px solid rgba(176,58,75,.4)}
+.tag.new{background:rgba(192,130,69,.14);color:var(--acc-2);border:1px solid rgba(192,130,69,.4)}
+.vs ul{list-style:none;display:flex;flex-direction:column;gap:13px;color:var(--mut);font-size:.96rem;line-height:1.5}
+.vs li{display:flex;gap:11px}
+.vs li::before{content:"✕";color:var(--bad);flex:0 0 auto}
+.vs .col.new li::before{content:"✓";color:var(--acc-2);font-weight:700}
+
+/* features */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.feat{background:var(--bg);padding:36px 30px;transition:background .35s}
+.feat:hover{background:var(--panel)}
+.feat .idx{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--faint);letter-spacing:.12em}
+.feat h3{font-size:1.12rem;margin:16px 0 10px}
+.feat p{color:var(--mut);font-size:.92rem;line-height:1.6}
+.feat .ic{width:42px;height:42px;color:var(--acc-2);margin-top:20px}
+.hash-demo{margin-top:48px;border:1px solid var(--border);border-radius:14px;background:var(--input);padding:26px 30px;font-family:'Space Mono',monospace;font-size:.8rem;line-height:2;color:var(--mut);overflow-x:auto;white-space:nowrap}
+.hash-demo .k{color:var(--faint)}
+.hash-demo .v{color:var(--txt)}
+.hash-demo .h{color:var(--acc-2)}
+
+/* how */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:st}
+.step{border-top:1px solid var(--border);padding-top:26px;position:relative}
+.step::before{counter-increment:st;content:"0" counter(st);font-family:'Space Mono',monospace;font-size:.78rem;color:var(--acc-2);letter-spacing:.14em}
+.step h3{margin:14px 0 10px;font-size:1.15rem}
+.step p{color:var(--mut);font-size:.94rem;line-height:1.65}
+
+/* screenshots strip */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.shot{border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--panel);transition:transform .4s var(--ease),border-color .4s}
+.shot:hover{transform:translateY(-8px);border-color:rgba(192,130,69,.45)}
+.shot img{width:100%;aspect-ratio:400/700;object-fit:cover;object-position:top}
+.shot figcaption{padding:16px 20px;font-size:.86rem;color:var(--mut);border-top:1px solid var(--hair)}
+.shot figcaption b{color:var(--txt);display:block;font-size:.95rem;margin-bottom:3px}
+
+/* pricing */
+.pricing-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
+.price-card{border:1px solid rgba(192,130,69,.45);border-radius:20px;padding:44px;background:linear-gradient(165deg,#16203A,#101828);position:relative;overflow:hidden}
+.price-card::before{content:"";position:absolute;top:-120px;right:-120px;width:340px;height:340px;background:radial-gradient(circle,rgba(192,130,69,.16),transparent 65%)}
+.promo{position:absolute;top:22px;right:-42px;transform:rotate(38deg);background:var(--acc);color:#14100A;font-weight:700;font-size:.72rem;letter-spacing:.1em;padding:7px 50px;text-transform:uppercase}
+.price-card .pname{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-2)}
+.price{display:flex;align-items:baseline;gap:12px;margin:18px 0 6px}
+.price .amt{font-size:clamp(3rem,5vw,4rem);font-weight:700;letter-spacing:-.03em}
+.price .per{color:var(--mut)}
+.price .old{font-size:1.1rem;color:var(--faint);text-decoration:line-through}
+.plist{list-style:none;margin:28px 0 34px;display:grid;grid-template-columns:1fr 1fr;gap:13px 22px}
+.plist li{display:flex;gap:10px;color:var(--mut);font-size:.93rem;line-height:1.45}
+.plist li::before{content:"✓";color:var(--acc-2);font-weight:700;flex:0 0 auto}
+.extra-card{border:1px solid var(--border);border-radius:20px;padding:38px;background:var(--panel);display:flex;flex-direction:column;gap:18px}
+.extra-card h3{font-size:1.2rem}
+.extra-card .big{font-size:2.4rem;font-weight:700}
+.extra-card p{color:var(--mut);font-size:.93rem;line-height:1.6}
+.trial-band{margin-top:24px;border:1px dashed rgba(192,130,69,.5);border-radius:14px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:rgba(192,130,69,.05)}
+.trial-band b{font-size:1.05rem}
+.trial-band span{color:var(--mut);font-size:.9rem}
+.fine{margin-top:20px;font-size:.76rem;color:var(--faint)}
+
+/* faq */
+.faq{max-width:52rem}
+details{border-bottom:1px solid var(--hair)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 4px;font-weight:600;font-size:1.04rem;transition:color .25s}
+summary:hover{color:var(--acc-2)}
+summary::after{content:"+";font-family:'Space Mono',monospace;color:var(--acc);font-size:1.3rem;transition:transform .3s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 4px 26px;color:var(--mut);line-height:1.7;font-size:.96rem;max-width:44rem}
+
+/* contact / footer */
+.contact-card{border:1px solid var(--border);border-radius:24px;padding:clamp(36px,6vw,72px);text-align:center;background:linear-gradient(180deg,#121B30,#0C1424);position:relative;overflow:hidden}
+.contact-card::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 70% 90% at 50% 100%,#000,transparent 75%);animation:gridpan 38s linear infinite;pointer-events:none}
+.contact-card h2{margin:0 auto 16px;position:relative}
+.contact-card p{color:var(--mut);max-width:36rem;margin:0 auto 32px;line-height:1.65;position:relative}
+.contact-card .btn{padding:16px 30px;position:relative}
+.contact-card .mail{display:inline-block;margin-top:18px;color:var(--mut);font-size:.9rem;position:relative}
+.contact-card .mail b{color:var(--acc-2);font-weight:600}
+footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-size:.84rem}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot .brand img{width:30px;height:30px}
+
+@media(max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:70px}
+  .vs,.pricing-grid{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr;gap:40px}
+  .shots{grid-template-columns:1fr;max-width:340px;margin:0 auto}
+  .nav-links{display:none}
+  .burger{display:block}
+  .ot1{left:0}.ot2{right:0}
+}
+@media(max-width:560px){.feat-grid,.plist{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="brand"><img src="logo.jpg" alt="Control Acceso Pro"><span>Control Acceso Pro<small>Seguridad de accesos</small></span></a>
+    <nav class="nav-links">
+      <a href="#problema">El problema</a>
+      <a href="#caracteristicas">Características</a>
+      <a href="#precios">Planes</a>
+      <a href="#faq">Preguntas</a>
+      <a href="https://panel.controlaccesopro.com" class="btn btn-ghost">Acceso clientes</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menú">
+      <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+    </button>
+  </div>
+  <div id="mobileMenu">
+    <a href="#problema">El problema</a>
+    <a href="#caracteristicas">Características</a>
+    <a href="#precios">Planes</a>
+    <a href="#faq">Preguntas</a>
+    <a href="https://panel.controlaccesopro.com" style="color:var(--acc-2)">Acceso clientes →</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow rv"><span class="dot"></span>Lanzamiento · 50% OFF × 6 meses — primeras 5 organizaciones</span>
+      <h1 class="rv" style="--i:1">Gestión profesional de accesos, <span class="grad">sin hardware costoso.</span></h1>
+      <p class="lead rv" style="--i:2">Plataforma integral de control de accesos para barrios privados, countries y clubes. Registro de movimientos, bitácora digital y reportes PDF con <b style="color:var(--txt)">validación de integridad</b>. Sin inversión en infraestructura, sin dependencia de conectividad.</p>
+      <div class="hero-ctas rv" style="--i:3">
+        <a class="btn btn-acc" href="#precios">Iniciar período de evaluación →</a>
+        <a class="btn btn-ghost" href="#caracteristicas">Ver cómo funciona</a>
+      </div>
+      <p class="hero-note rv" style="--i:4"><b>15 días de evaluación</b> · Sin tarjeta · Activación inmediata</p>
+    </div>
+    <div class="device-zone rv" style="--i:2">
+      <div class="orbit-tag ot1">Registros protegidos<b class="mono">✓ sellado digital</b></div>
+      <div class="orbit-tag ot2">Sin conectividad<b>funciona igual</b></div>
+      <div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="shotbox" id="shotbox">
+            <img src="app1.jpg" class="act" alt="Inicio de turno en la aplicación">
+            <img src="app2.jpg" alt="Pantalla principal: ingreso y egreso">
+            <img src="app3.jpg" alt="Cierre de turno con PDF firmado">
+          </div>
+        </div>
+        <div class="dots" id="dots">
+          <button class="act" aria-label="Captura 1"></button>
+          <button aria-label="Captura 2"></button>
+          <button aria-label="Captura 3"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- PROBLEMA -->
+<section id="problema">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">01 / El problema</div>
+      <h2>Los registros manuales no tienen validez ante un incidente.</h2>
+      <p>Ante un incidente, la documentación en papel carece de valor probatorio: se extravía, se deteriora o puede alterarse. Los sistemas tradicionales requieren inversión en lectores, cableado e instalación que incrementan significativamente el costo operativo.</p>
+    </div>
+    <div class="vs">
+      <div class="col old rv">
+        <h3><span class="tag old">Hoy</span> Registro manual</h3>
+        <ul>
+          <li>Documentación ilegible, incompleta o extraviada</li>
+          <li>Susceptible de modificaciones posteriores — sin valor probatorio</li>
+          <li>Sin trazabilidad del personal responsable</li>
+          <li>Informes de turno que se elaboran manualmente (o no se elaboran)</li>
+          <li>Hardware tradicional: lectores, instalación y mantenimiento caros</li>
+        </ul>
+      </div>
+      <div class="col new rv" style="--i:1">
+        <h3><span class="tag new">Con Control Acceso Pro</span></h3>
+        <ul>
+          <li>Cada ingreso y egreso con fecha, hora, documento, patente y personal responsable</li>
+          <li>Sello digital de seguridad: cualquier alteración queda detectada</li>
+          <li>Reportes PDF de turno listos para presentar como respaldo documental</li>
+          <li>Operación sin conectividad con sincronización automática</li>
+          <li>El dispositivo móvil es toda la infraestructura necesaria</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- FEATURES -->
+<section id="caracteristicas">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">02 / Características</div>
+      <h2>Diseñado para operación en terreno, validado con personal de seguridad.</h2>
+      <p>Desarrollado en colaboración con personal de seguridad: interfaz optimizada para uso intensivo, registro ágil y adopción inmediata por parte del equipo.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat rv" style="--i:0"><span class="idx">F·01</span><h3>Registro de movimientos</h3><p>Entradas y salidas con documento, nombre, tipo de visita, patente y observaciones. Proceso ágil, sin información redundante.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      <div class="feat rv" style="--i:1"><span class="idx">F·02</span><h3>Registros inalterables</h3><p>Cada registro queda sellado digitalmente y vinculado al anterior. Cualquier modificación posterior es detectada por la verificación de integridad.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="feat rv" style="--i:2"><span class="idx">F·03</span><h3>Bitácora digital de turno</h3><p>Novedades del turno con niveles de importancia, también selladas digitalmente. El libro de actas, en formato digital verificable.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg></div>
+      <div class="feat rv" style="--i:3"><span class="idx">F·04</span><h3>Reportes PDF con validez documental</h3><p>Al cerrar turno, informe PDF con todos los movimientos y novedades. Documentación lista para la administración o respaldo ante reclamos.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg></div>
+      <div class="feat rv" style="--i:4"><span class="idx">F·05</span><h3>Gestión de turnos y personal</h3><p>Turnos configurables, personal registrado y cierre de turno con firma digital. Trazabilidad completa de responsables.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <div class="feat rv" style="--i:5"><span class="idx">F·06</span><h3>Consola de administración web</h3><p>Movimientos, bitácora, puntos de control y verificación de integridad desde cualquier dispositivo, con identidad corporativa.</p><svg class="ic" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg></div>
+    </div>
+
+    <div class="hash-demo rv">
+      <span class="k">registro de ingreso</span> <span class="v">→ queda sellado con fecha, hora, documento, patente y personal responsable</span><br>
+      <span class="k">verificación     </span> <span class="v">→ se verifican los 42 registros del día… </span><span class="h">✓ TODO ÍNTEGRO, NINGUNA MODIFICACIÓN DETECTADA</span>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- HOW -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">03 / Implementación</div>
+      <h2>Activación inmediata, sin interrupción operativa.</h2>
+    </div>
+    <div class="steps">
+      <div class="step rv"><h3>Instalación de la aplicación</h3><p>En el dispositivo móvil del punto de control (cualquier Android). Sin técnicos, sin cableado, sin obra. El período de evaluación comienza automáticamente.</p></div>
+      <div class="step rv" style="--i:1"><h3>Configuración de la organización</h3><p>Nombre de la empresa, puntos de control, turnos y personal desde la consola de administración. Proceso de cinco minutos, con asistencia si la requiere.</p></div>
+      <div class="step rv" style="--i:2"><h3>Inicio de operación</h3><p>El personal registra movimientos y novedades. Usted supervisa todo desde la consola web y recibe los informes PDF de cada turno cerrado.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- SCREENSHOTS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">04 / El producto</div>
+      <h2>Simple para el guardia. Serio para la administración.</h2>
+    </div>
+    <div class="shots">
+      <figure class="shot rv"><img src="prod1.jpg" alt="Consola de administración"><figcaption><b>Consola de administración</b>Organización, puntos de control y acceso a la consola web.</figcaption></figure>
+      <figure class="shot rv" style="--i:1"><img src="prod2.jpg" alt="Turnos configurables"><figcaption><b>Turnos configurables</b>Mañana, tarde, noche y los que su operación requiera.</figcaption></figure>
+      <figure class="shot rv" style="--i:2"><img src="prod3.jpg" alt="Menú de la aplicación"><figcaption><b>Todo al alcance</b>Personal adentro ahora, historial, búsqueda y exportación.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- PRICING -->
+<section id="precios">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">05 / Precios</div>
+      <h2>Un precio por organización. Transparente y predecible.</h2>
+      <p>El modelo de licenciamiento es por organización, no por personal. Si administra múltiples sitios, cada uno opera con su propio plan.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card rv">
+        <div class="promo">50% OFF × 6 meses</div>
+        <div class="pname">Plan Organización</div>
+        <div class="price"><span class="old" style="font-size:1.6rem">USD 25</span><span class="amt" style="color:var(--acc-2)">USD 12.50</span><span class="per">/ mes por organización<br><span style="font-size:.78rem;color:var(--acc-2)">primeros 6 meses · solo primeras 5 organizaciones</span></span></div>
+        <ul class="plist">
+          <li>2 dispositivos de punto de control incluidos</li>
+          <li>Personal y turnos ilimitados</li>
+          <li>Consola de administración web incluida</li>
+          <li>Registro de movimientos y bitácora</li>
+          <li>Sellado digital + verificación de integridad</li>
+          <li>Reportes PDF de cada turno</li>
+          <li>Operación sin conectividad</li>
+          <li>Soporte directo con los desarrolladores</li>
+        </ul>
+        <a class="btn btn-acc" href="mailto:controlaccesopro.app@gmail.com?subject=Quiero%20mi%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20de%2015%20d%C3%ADas&body=Hola%2C%20quiero%20activar%20el%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20para%20mi%20organizaci%C3%B3n%3A%0A%0ANombre%3A%0AEmpresa%2FBarrio%3A%0ATel%C3%A9fono%3A" style="padding:15px 28px">Iniciar período de evaluación →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div class="extra-card rv" style="--i:1">
+          <h3>Dispositivo adicional</h3>
+          <div class="big">USD 10<span style="font-size:1rem;color:var(--mut);font-weight:400"> / mes c/u</span></div>
+          <p>Cada dispositivo queda registrado por licencia: nadie puede utilizar su suscripción en equipos no autorizados. Si un dispositivo se daña o es sustraído, se libera y se da de alta otro.</p>
+        </div>
+        <div class="extra-card rv" style="--i:2">
+          <h3 style="display:flex;align-items:center;gap:10px">🔥 Oferta de lanzamiento</h3>
+          <p>Las <b style="color:var(--acc-2)">primeras 5 organizaciones</b> obtienen <b style="color:var(--acc-2)">50% de bonificación por 6 meses</b> en un sitio. Cupos limitados, por orden de llegada.</p>
+        </div>
+      </div>
+    </div>
+    <div class="trial-band rv">
+      <div><b>15 días de evaluación, todas las funcionalidades incluidas.</b><br><span>Sin tarjeta. Sin compromiso. Si no le convence, no paga nada.</span></div>
+      <a class="btn btn-ghost" href="mailto:controlaccesopro.app@gmail.com?subject=Quiero%20mi%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20de%2015%20d%C3%ADas" style="padding:12px 24px">Solicitar evaluación</a>
+    </div>
+    <p class="fine rv">* Precios en dólares estadounidenses, facturados en pesos argentinos al tipo de cambio vigente. Precio de lanzamiento sujeto a actualización trimestral. Consultar por múltiples organizaciones y clubes.</p>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="marker">06 / Preguntas frecuentes</div>
+      <h2>Lo que todos preguntan antes de empezar.</h2>
+    </div>
+    <div class="faq">
+      <details class="rv"><summary>¿Se requiere inversión en hardware adicional?</summary><p>No. El dispositivo Android del punto de control es todo el equipo necesario. No hay instalación, cableado ni mantenimiento de hardware. Si el dispositivo se daña, se libera y se da de alta otro en minutos.</p></details>
+      <details class="rv" style="--i:1"><summary>¿Cómo opera el sistema sin conectividad?</summary><p>La aplicación funciona sin internet: registra movimientos, bitácora y genera los PDF sin conexión. Cuando se restablece la conectividad, sincroniza todo con la consola web automáticamente.</p></details>
+      <details class="rv" style="--i:2"><summary>¿Qué validez tienen los registros ante un incidente?</summary><p>Cada registro queda sellado digitalmente y vinculado al anterior: si alguien modifica, elimina o inventa un dato posteriormente, la verificación de integridad lo detecta al instante. Esto otorga valor documental al informe PDF ante la administración, una auditoría o un reclamo legal.</p></details>
+      <details class="rv" style="--i:3"><summary>¿Existe límite de personal?</summary><p>No. El plan es por organización con 2 dispositivos de punto de control incluidos: el personal que necesite utiliza esos dispositivos en sus turnos, sin costo adicional.</p></details>
+      <details class="rv" style="--i:4"><summary>¿La plataforma se adapta a otros tipos de organizaciones?</summary><p>Sí. El sistema se adapta a barrios privados, countries, clubes, sociedades de fomento y empresas de seguridad con múltiples sitios.</p></details>
+      <details class="rv" style="--i:5"><summary>¿Cómo inicio el período de evaluación?</summary><p>Escríbanos a <b style="color:var(--acc-2)">controlaccesopro.app@gmail.com</b> con el nombre de su organización y activaremos su período de evaluación el mismo día. Los 15 días incluyen todas las funcionalidades, sin tarjeta.</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="hair"></div>
+
+<!-- CONTACT -->
+<section id="contacto">
+  <div class="wrap">
+    <div class="contact-card rv">
+      <div class="marker" style="justify-content:center">07 / Comenzar</div>
+      <h2>¿Listo para profesionalizar la gestión de accesos?</h2>
+      <p>Indíquenos el nombre de su organización y activaremos su período de evaluación de 15 días. Las primeras 5 organizaciones reciben una bonificación del 50% durante 6 meses.</p>
+      <a class="btn btn-acc" href="mailto:controlaccesopro.app@gmail.com?subject=Quiero%20mi%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20de%2015%20d%C3%ADas&body=Hola%2C%20quiero%20activar%20el%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20para%20mi%20organizaci%C3%B3n%3A%0A%0ANombre%3A%0AEmpresa%2FBarrio%3A%0ATel%C3%A9fono%3A">Escríbanos y comencemos →</a>
+      <span class="mail">o directamente a <b>controlaccesopro.app@gmail.com</b></span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a href="#" class="brand"><img src="logo.jpg" alt=""><span style="font-size:.92rem">Control Acceso Pro</span></a>
+    <div>Hecho en San Juan, Argentina 🇦🇷 · © 2026 Control Acceso Pro<br>
+    <a href="mailto:guillevil1972@gmail.com?subject=Consulta%20desarrollo%20web&body=Hola%2C%20vi%20el%20sitio%20de%20Control%20Acceso%20Pro%20y%20me%20interesa%20un%20desarrollo%3A%0A%0A" style="color:var(--faint)">Sitio desarrollado por <b style="color:var(--acc-2)">Guillermo Villegas</b> · ¿Necesita una solución web o sistema a medida? <span style="text-decoration:underline">Consúltenos</span></a></div>
+    <a href="https://panel.controlaccesopro.com" style="color:var(--mut)">Acceso clientes →</a>
+  </div>
+</footer>
+
+<script>
+// reveal on scroll
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// hero shot carousel
+const shots=document.querySelectorAll('#shotbox img');
+const dots=document.querySelectorAll('#dots button');
+let cur=0,timer;
+function go(i){cur=i;shots.forEach((s,k)=>s.classList.toggle('act',k===i));dots.forEach((d,k)=>d.classList.toggle('act',k===i))}
+function auto(){timer=setInterval(()=>go((cur+1)%shots.length),4200)}
+dots.forEach((d,k)=>d.addEventListener('click',()=>{clearInterval(timer);go(k);auto()}));
+auto();
+
+// mobile menu
+const burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>mm.classList.toggle('open'));
+mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
+</script>
+</body>
+</html>
