@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /invitar.html
+
+Sitemap: https://controlaccesopro.com/sitemap.xml
