@@ -446,6 +446,7 @@ footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-s
         <input type="text" name="organizacion" placeholder="Barrio / Empresa de seguridad" required>
         <input type="email" name="email" placeholder="Su email" required>
         <input type="hidden" name="_subject" value="Demo solicitada desde la landing">
+        <input type="hidden" name="_next" value="https://controlaccesopro.com/?demo=ok#contacto">
         <button type="submit" class="btn btn-acc">NECESITO UNA DEMO →</button>
       </form>
       <p class="micro">Respuesta en menos de 24 h · Sin compromiso</p>
@@ -464,6 +465,11 @@ footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-s
 </footer>
 
 <script>
+// gracias por enviar el formulario
+if(new URLSearchParams(location.search).get('demo')==='ok'){
+  setTimeout(()=>alert('✅ ¡Gracias! Recibimos tu solicitud. Te contactamos en menos de 24 h.'),400);
+}
+
 // reveal on scroll
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
