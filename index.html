@@ -184,6 +184,14 @@ details p{padding:0 4px 26px;color:var(--mut);line-height:1.7;font-size:.96rem;m
 .contact-card .btn{padding:16px 30px;position:relative}
 .contact-card .mail{display:inline-block;margin-top:18px;color:var(--mut);font-size:.9rem;position:relative}
 .contact-card .mail b{color:var(--acc-2);font-weight:600}
+.cta-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;margin-bottom:14px}
+.cta-form input{padding:15px 18px;border-radius:12px;border:1px solid var(--border);background:#0C1424;color:var(--txt,#EDF1F7);min-width:230px;font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s}
+.cta-form input:focus{border-color:var(--acc)}
+.cta-form input::placeholder{color:var(--mut)}
+.cta-form .btn{border:none;cursor:pointer;font-family:inherit}
+.micro{color:var(--mut);font-size:.82rem;position:relative;margin-bottom:16px}
+.proof{color:var(--mut);font-size:.88rem;position:relative;margin-bottom:26px}
+.proof b{color:var(--acc-2);font-weight:600}
 footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-size:.84rem}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .foot .brand img{width:30px;height:30px}
@@ -200,6 +208,7 @@ footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-s
 }
 @media(max-width:560px){.feat-grid,.plist{grid-template-columns:1fr}}
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -432,7 +441,14 @@ footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--faint);font-s
       <div class="marker" style="justify-content:center">07 / Comenzar</div>
       <h2>¿Listo para profesionalizar la gestión de accesos?</h2>
       <p>Indíquenos el nombre de su organización y activaremos su período de evaluación de 15 días. Las primeras 5 organizaciones reciben una bonificación del 50% durante 6 meses.</p>
-      <a class="btn btn-acc" href="mailto:controlaccesopro.app@gmail.com?subject=Quiero%20mi%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20de%2015%20d%C3%ADas&body=Hola%2C%20quiero%20activar%20el%20per%C3%ADodo%20de%20evaluaci%C3%B3n%20para%20mi%20organizaci%C3%B3n%3A%0A%0ANombre%3A%0AEmpresa%2FBarrio%3A%0ATel%C3%A9fono%3A">Escríbanos y comencemos →</a>
+      <p class="proof">🛡️ Ya protege accesos en barrios de <b>San Juan</b> · Registro con validez legal · Funciona sin internet</p>
+      <form action="https://formspree.io/f/xljelrdg" method="POST" class="cta-form">
+        <input type="text" name="organizacion" placeholder="Barrio / Empresa de seguridad" required>
+        <input type="email" name="email" placeholder="Su email" required>
+        <input type="hidden" name="_subject" value="Demo solicitada desde la landing">
+        <button type="submit" class="btn btn-acc">NECESITO UNA DEMO →</button>
+      </form>
+      <p class="micro">Respuesta en menos de 24 h · Sin compromiso</p>
       <span class="mail">o directamente a <b>controlaccesopro.app@gmail.com</b></span>
     </div>
   </div>
